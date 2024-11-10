@@ -1,22 +1,29 @@
 package com.aluraCursos.librosyautores.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
+import java.util.List;
+
+@Entity
+@Table(name="autor")
 public class Autor {
-    @JsonProperty("name")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String nombre;
-    @JsonProperty("birth_year")
-    private int cumpleanios;
-    @JsonProperty("death_year")
-    private int fallecimiento;
+    private String cumpleanios;
+    private String fallecimiento;
+    @ManyToMany(mappedBy = "autores")
+    private List<Libros> libros;
 
     public Autor() {
     }
 
-    public Autor(int fallecimiento, int cumpleanios, String nombre) {
-        this.fallecimiento = fallecimiento;
-        this.cumpleanios = cumpleanios;
-        this.nombre = nombre;
+    public Autor(RAutorData autordata) {
+        this.nombre = autordata.nombre();
+        this.cumpleanios = autordata.cumple();
+        this.fallecimiento = autordata.fallecimiento();
     }
 
     public String getNombre() {
@@ -27,20 +34,36 @@ public class Autor {
         this.nombre = nombre;
     }
 
-    public int getCumpleanios() {
+    public String getCumpleanios() {
         return cumpleanios;
     }
 
-    public void setCumpleanios(int cumpleanios) {
+    public void setCumpleanios(String cumpleanios) {
         this.cumpleanios = cumpleanios;
     }
 
-    public int getFallecimiento() {
+    public String getFallecimiento() {
         return fallecimiento;
     }
 
-    public void setFallecimiento(int fallecimiento) {
+    public void setFallecimiento(String fallecimiento) {
         this.fallecimiento = fallecimiento;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<Libros> getLibros() {
+        return libros;
+    }
+
+    public void setLibros(List<Libros> libros) {
+        this.libros = libros;
     }
 
     @Override

@@ -1,31 +1,34 @@
 package com.aluraCursos.librosyautores.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name="libro")
 public class Libros {
-    @JsonProperty("id")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @JsonProperty("title")
     private String title;
-    @JsonProperty("authors")
-    private List<Autor> autor;
-    @JsonProperty("language")
-    private String idioma;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name="libro-autores",
+            joinColumns = @JoinColumn(name = "libro_id"),
+            inverseJoinColumns = @JoinColumn(name = "autor_id")
+    )
+    private List<Autor> autores = new ArrayList<>();
+    private List<String> idioma;
 
     public Libros() {
     }
 
-    public Libros(int id, String title, List<Autor> autor, String idioma) {
-        this.id = id;
-        this.title = title;
-        this.autor = autor;
-        this.idioma = idioma;
+    public Libros(RLibrosData libroData) {
+        this.title = libroData.titulo();
+        libroData.autor().forEach(e-> this.autores.add(new Autor(e)));
+        this.idioma = libroData.idiomas();
     }
 
     public int getId() {
@@ -44,24 +47,24 @@ public class Libros {
         this.title = title;
     }
 
-    public List<Autor> getAutor() {
-        return autor;
+    public List<Autor> getAutores() {
+        return autores;
     }
 
-    public void setAutor(List<Autor> autor) {
-        this.autor = autor;
+    public void setAutores(List<Autor> autores) {
+        this.autores = autores;
     }
 
-    public String getIdioma() {
+    public List<String> getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(String idioma) {
+    public void setIdioma(List<String> idioma) {
         this.idioma = idioma;
     }
 
     @Override
     public String toString() {
-        return "Titulo: " + title + ", Autor: "+ autor + ", Idioma: " + idioma;
+        return "Titulo: " + title + ", Autor: "+ autores + ", Idioma: " + idioma;
     }
 }

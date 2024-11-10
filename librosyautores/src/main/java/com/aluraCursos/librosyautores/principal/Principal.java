@@ -1,18 +1,31 @@
 package com.aluraCursos.librosyautores.principal;
 
-import com.aluraCursos.librosyautores.models.ApiResponse;
-import com.aluraCursos.librosyautores.models.DatosLibros;
+import com.aluraCursos.librosyautores.models.Libros;
+import com.aluraCursos.librosyautores.models.RApiResponse;
+import com.aluraCursos.librosyautores.models.RLibrosData;
 import com.aluraCursos.librosyautores.services.ApiConsulta;
 import com.aluraCursos.librosyautores.services.ConversorDatos;
+import com.aluraCursos.librosyautores.services.IRepository;
 
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Principal {
     //Variables
     private Scanner scan = new Scanner(System.in);
     private ApiConsulta consulta = new ApiConsulta();
     private ConversorDatos conversor = new ConversorDatos();
+    private List<RLibrosData> listaLibros;
+    private IRepository repository;
+    private List<Libros> misLibros;
     //Funciones y metodos
+
+
+    public Principal(IRepository repository) {
+        this.repository = repository;
+    }
+
     public void principal() {
         int opc = -1;
         while (opc != 0) {
@@ -49,11 +62,28 @@ public class Principal {
         System.out.println("|* Nombre del libro q busca *|");
         String libro = scan.nextLine();
         String json = consulta.buscarLibro(libro);
-        ApiResponse datos  = conversor.pasarDatos(json, ApiResponse.class);
-
-        System.out.println(datos.getLibros());
+        RApiResponse datos  = conversor.pasarDatos(json, RApiResponse.class);
+        listaLibros = datos.libros()
+                .stream()
+                .distinct()
+                .collect(Collectors.toList());
+        System.out.println("|* Libros Encontrados *|");
+        /*listaLibros.forEach(System.out::println);*/
+        List<Libros> libros = listaLibros.stream()
+                .map(record -> new Libros(record))
+                .collect(Collectors.toList());
+        for (Libros l : libros){
+            repository.save(l);
+            System.out.println(l);
+        }
     }
-    private void ListarLibros(){}
+
+    private void ListarLibros(){
+        misLibros = repository.findAll();
+        System.out.println("|* Libros Buscados *|");
+        misLibros.forEach(System.out::println);
+    }
+
     private void ListarLibrosIdiomas(){}
     private void ListarAutores(){}
     private void ListarAutoresVivosEn(){}
