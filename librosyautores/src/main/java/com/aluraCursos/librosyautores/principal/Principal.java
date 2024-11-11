@@ -63,18 +63,22 @@ public class Principal {
         String libro = scan.nextLine();
         String json = consulta.buscarLibro(libro.replace(" ", "%20"));
         RApiResponse datos = conversor.pasarDatos(json, RApiResponse.class);
-        listaLibros = datos.libros()
-                .stream()
-                .distinct()
-                .collect(Collectors.toList());
-        System.out.println("|* Libros Encontrados *|");
-        /*listaLibros.forEach(System.out::println);*/
-        List<Libros> libros = listaLibros.stream()
-                .map(record -> new Libros(record))
-                .collect(Collectors.toList());
-        for (Libros l : libros) {
-            repository.save(l);
-            System.out.println(l);
+        if(datos.libros().isEmpty()){
+            System.out.println("|* Libro no encontrado *|");
+        }else {
+            listaLibros = datos.libros()
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            System.out.println("|* Libros Encontrados *|");
+            /*listaLibros.forEach(System.out::println);*/
+            List<Libros> libros = listaLibros.stream()
+                    .map(record -> new Libros(record))
+                    .collect(Collectors.toList());
+            for (Libros l : libros) {
+                repository.save(l);
+                System.out.println(l);
+            }
         }
     }
 
@@ -89,8 +93,12 @@ public class Principal {
         String text = scan.nextLine();
         Idiomas idioma = Idiomas.fromStringLanguage(text);
         misLibros = repository.findByIdioma(idioma);
-        System.out.println("|* Libros en " + text + " *|");
-        misLibros.forEach(System.out::println);
+        if (misLibros.isEmpty()){
+            System.out.println("|* No se encontraron libros registrados en " + text + " *|");
+        }else {
+            System.out.println("|* Libros en " + text + " *|");
+            misLibros.forEach(System.out::println);
+        }
     }
     private void getAutores(){
         List<RAutorData> lista = new ArrayList<>();
@@ -116,11 +124,18 @@ public class Principal {
         System.out.println("|* Ingrese el año *|");
         int anio = scan.nextInt();
         scan.nextLine();
-        autorList.forEach(e->{
-            if(e.getCumpleanios() <= anio && e.getFallecimiento()>= anio){
-                System.out.println(e.toString());
+        List<Autor> tempList = autorList.stream()
+                .filter(e->e.getCumpleanios()<=anio && e.getFallecimiento()>=anio)
+                .collect(Collectors.toList());
+        if(tempList.isEmpty()){
+            System.out.println("|* No hay autores vivos registrados ese año *|");
+        }else{
+            System.out.println("|* Autores encontrados *|");
+            for (Autor a : tempList){
+                System.out.println(a);
+                System.out.println("|* - - - - - - - - - - - - - - - - - - *|");
             }
-        });
+        }
     }
 
     public void menu() {

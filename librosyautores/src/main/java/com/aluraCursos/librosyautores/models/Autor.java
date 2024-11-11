@@ -68,6 +68,9 @@ public class Autor {
 
     @Override
     public String toString() {
-        return "Autor: "+ nombre + ", Cumpleaños: "+ cumpleanios + ", fallecio en: " + fallecimiento;
+        return """
+                Escritor / Autor: %s
+                Nacio: %d Fallecio: %d
+                """.formatted(nombre, cumpleanios, fallecimiento);
     }
 }

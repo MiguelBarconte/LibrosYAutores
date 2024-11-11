@@ -65,6 +65,12 @@ public class Libros {
 
     @Override
     public String toString() {
-        return "Titulo: " + title + ", Autor: "+ autores + ", Idioma: " + idioma;
+        return """
+                |*- - - - - - - - - - - - - - - - - - - - - - - - - - -*|
+                |* Libro: %s
+                |* %s
+                |* Idioma: %s
+                |*- - - - - - - - - - - - - - - - - - - - - - - - - - -*|
+                """.formatted(title, autores.toString(), idioma);
     }
 }
