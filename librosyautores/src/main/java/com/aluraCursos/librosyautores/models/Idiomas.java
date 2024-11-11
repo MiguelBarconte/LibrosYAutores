@@ -1,44 +1,74 @@
 package com.aluraCursos.librosyautores.models;
 
-import javax.swing.*;
-
 public enum Idiomas {
-    EN("inglés", "english"),
+    ES("español","spanish","es"),
+    EN("ingles","english","en"),
+    FR("francés","french", "fr"),
+    DE("aleman","german", "de"),
+    IT("italiano","italian", "it"),
+    PT("portugues","portuguese", "pt"),
+    RU("ruso","russian", "ru"),
+    ZH("chino","chinese", "zh"),
+    JA("japones","japanese", "ja"),
+    KO("coreano","korean", "ko"),
+    AR("arabe","arabic", "ar"),
+    HI("hindi","hindi", "hi"),
+    NO("desconocido", "unknow", "no");
+    private String idiomaEsp;
+    private String idiomaEng;
+    private String abreviatura;
 
-    ES("español", "spanish"),
-
-    FR("francés", "french"),
-
-    DE("alemán", "german"),
-
-    IT("italiano", "italian"),
-
-    PT("portugués", "portuguese"),
-
-    NL("holandés", "dutch"),
-
-    RU("ruso", "russian"),
-
-    ZH("chino", "chinese"),
-
-    JA("japonés", "japanese"),
-
-    KO("coreano", "korean"),
-
-    AR("árabe", "arabic"),
-
-    EL("griego", "greek"),
-
-    HE("hebreo", "hebrew"),
-
-    TR("turco", "turkish"),
-
-    SV("sueco", "swedish");
-    private String languageEs;
-    private String languageEn;
-
-    Idiomas(String languageEs, String languageEn) {
-        this.languageEs = languageEs;
-        this.languageEn = languageEn;
+    Idiomas(String idiomaEsp, String idiomaEng, String abreviatura) {
+        this.idiomaEsp = idiomaEsp;
+        this.idiomaEng = idiomaEng;
+        this.abreviatura = abreviatura;
     }
+
+    public String getIdiomaEsp() {
+        return idiomaEsp;
+    }
+
+    public void setIdiomaEsp(String idiomaEsp) {
+        this.idiomaEsp = idiomaEsp;
+    }
+
+    public String getIdiomaEng() {
+        return idiomaEng;
+    }
+
+    public void setIdiomaEng(String idiomaEng) {
+        this.idiomaEng = idiomaEng;
+    }
+
+    public String getAbreviatura() {
+        return abreviatura;
+    }
+
+    public void setAbreviatura(String abreviatura) {
+        this.abreviatura = abreviatura;
+    }
+
+    public static Idiomas fromStringLanguage(String text){
+        for(Idiomas i : Idiomas.values()){
+            if(i.idiomaEsp.equalsIgnoreCase(text)){
+                return i;
+            }
+        }
+        for(Idiomas i : Idiomas.values()){
+            if(i.idiomaEng.equalsIgnoreCase(text)){
+                return i;
+            }
+        }
+        return NO;
+    }
+
+    public static Idiomas fromString(String text){
+        for(Idiomas i : Idiomas.values()){
+            if(i.abreviatura.equalsIgnoreCase(text)){
+                return i;
+            }
+        }
+        return NO;
+    }
+
 }

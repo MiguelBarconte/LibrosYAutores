@@ -1,12 +1,11 @@
 package com.aluraCursos.librosyautores.principal;
 
-import com.aluraCursos.librosyautores.models.Libros;
-import com.aluraCursos.librosyautores.models.RApiResponse;
-import com.aluraCursos.librosyautores.models.RLibrosData;
+import com.aluraCursos.librosyautores.models.*;
 import com.aluraCursos.librosyautores.services.ApiConsulta;
 import com.aluraCursos.librosyautores.services.ConversorDatos;
 import com.aluraCursos.librosyautores.services.IRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -18,7 +17,8 @@ public class Principal {
     private ConversorDatos conversor = new ConversorDatos();
     private List<RLibrosData> listaLibros;
     private IRepository repository;
-    private List<Libros> misLibros;
+    private List<Libros> misLibros = new ArrayList<>();
+    private List<Autor> autorList = new ArrayList<>();
     //Funciones y metodos
 
 
@@ -61,8 +61,8 @@ public class Principal {
     private void BuscarPorTitulo() {
         System.out.println("|* Nombre del libro q busca *|");
         String libro = scan.nextLine();
-        String json = consulta.buscarLibro(libro);
-        RApiResponse datos  = conversor.pasarDatos(json, RApiResponse.class);
+        String json = consulta.buscarLibro(libro.replace(" ", "%20"));
+        RApiResponse datos = conversor.pasarDatos(json, RApiResponse.class);
         listaLibros = datos.libros()
                 .stream()
                 .distinct()
@@ -72,21 +72,56 @@ public class Principal {
         List<Libros> libros = listaLibros.stream()
                 .map(record -> new Libros(record))
                 .collect(Collectors.toList());
-        for (Libros l : libros){
+        for (Libros l : libros) {
             repository.save(l);
             System.out.println(l);
         }
     }
 
-    private void ListarLibros(){
+    private void ListarLibros() {
         misLibros = repository.findAll();
         System.out.println("|* Libros Buscados *|");
         misLibros.forEach(System.out::println);
     }
 
-    private void ListarLibrosIdiomas(){}
-    private void ListarAutores(){}
-    private void ListarAutoresVivosEn(){}
+    private void ListarLibrosIdiomas() {
+        System.out.println("|* Ingrese el idioma en q busca el libro *|");
+        String text = scan.nextLine();
+        Idiomas idioma = Idiomas.fromStringLanguage(text);
+        misLibros = repository.findByIdioma(idioma);
+        System.out.println("|* Libros en " + text + " *|");
+        misLibros.forEach(System.out::println);
+    }
+    private void getAutores(){
+        List<RAutorData> lista = new ArrayList<>();
+        List<Object[]> respuesta = repository.buscarAutores();
+        for (Object[] obj : respuesta) {
+            String a = (String) obj[0];
+            int b = (int) obj[1];
+            int c = (int) obj[2];
+            lista.add(new RAutorData(a, b, c));
+        }
+        lista.stream()
+                .distinct()
+                .collect(Collectors.toList())
+                .forEach(e -> autorList.add(new Autor(e)));
+    }
+    private void ListarAutores() {
+        getAutores();
+        System.out.println("|* Autores guardados *|");
+        autorList.forEach(System.out::println);
+    }
+
+    private void ListarAutoresVivosEn() {
+        System.out.println("|* Ingrese el año *|");
+        int anio = scan.nextInt();
+        scan.nextLine();
+        autorList.forEach(e->{
+            if(e.getCumpleanios() <= anio && e.getFallecimiento()>= anio){
+                System.out.println(e.toString());
+            }
+        });
+    }
 
     public void menu() {
         System.out.println("""
@@ -102,5 +137,5 @@ public class Principal {
                 """
         );
     }
-    
+
 }//Ultima llave

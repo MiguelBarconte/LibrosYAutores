@@ -12,8 +12,8 @@ public class Autor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nombre;
-    private String cumpleanios;
-    private String fallecimiento;
+    private int cumpleanios;
+    private int fallecimiento;
     @ManyToMany(mappedBy = "autores")
     private List<Libros> libros;
 
@@ -22,8 +22,8 @@ public class Autor {
 
     public Autor(RAutorData autordata) {
         this.nombre = autordata.nombre();
-        this.cumpleanios = autordata.cumple();
-        this.fallecimiento = autordata.fallecimiento();
+        this.cumpleanios = Integer.valueOf(autordata.cumple());
+        this.fallecimiento = Integer.valueOf(autordata.fallecimiento());
     }
 
     public String getNombre() {
@@ -34,19 +34,19 @@ public class Autor {
         this.nombre = nombre;
     }
 
-    public String getCumpleanios() {
+    public int getCumpleanios() {
         return cumpleanios;
     }
 
-    public void setCumpleanios(String cumpleanios) {
+    public void setCumpleanios(int cumpleanios) {
         this.cumpleanios = cumpleanios;
     }
 
-    public String getFallecimiento() {
+    public int getFallecimiento() {
         return fallecimiento;
     }
 
-    public void setFallecimiento(String fallecimiento) {
+    public void setFallecimiento(int fallecimiento) {
         this.fallecimiento = fallecimiento;
     }
 

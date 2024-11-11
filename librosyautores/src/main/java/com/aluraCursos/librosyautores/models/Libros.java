@@ -2,7 +2,6 @@ package com.aluraCursos.librosyautores.models;
 
 import jakarta.persistence.*;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,8 @@ public class Libros {
             inverseJoinColumns = @JoinColumn(name = "autor_id")
     )
     private List<Autor> autores = new ArrayList<>();
-    private List<String> idioma;
+    @Enumerated(EnumType.STRING)
+    private Idiomas idioma;
 
     public Libros() {
     }
@@ -28,7 +28,7 @@ public class Libros {
     public Libros(RLibrosData libroData) {
         this.title = libroData.titulo();
         libroData.autor().forEach(e-> this.autores.add(new Autor(e)));
-        this.idioma = libroData.idiomas();
+        this.idioma = Idiomas.fromString(libroData.idiomas().getFirst());
     }
 
     public int getId() {
@@ -55,11 +55,11 @@ public class Libros {
         this.autores = autores;
     }
 
-    public List<String> getIdioma() {
+    public Idiomas getIdioma() {
         return idioma;
     }
 
-    public void setIdioma(List<String> idioma) {
+    public void setIdioma(Idiomas idioma) {
         this.idioma = idioma;
     }
 

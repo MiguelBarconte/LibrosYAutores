@@ -10,7 +10,6 @@ public class ApiConsulta {
     private final String URL = "https://gutendex.com/books/";
     private final HttpClient CLIENT = HttpClient.newHttpClient();
     public String buscarLibro(String nombreLibro){
-
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(URL+"?search="+nombreLibro))
                 .build();
